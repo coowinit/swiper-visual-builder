@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Swiper Visual Builder · v0.1.2</title>
-  <link rel="stylesheet" href="./assets/css/app.css">
+  <title>Swiper Visual Builder · v0.2.0</title>
+  <link rel="stylesheet" href="./assets/css/app.css?v=0.2.1">
 </head>
 <body>
 <header class="topbar">
-  <div><div class="brand">Swiper <span>Visual Builder</span> <small class="muted">v0.1.2</small></div><div class="muted">响应式配置 · 实时预览 · 生产代码导出</div></div>
+  <div><div class="brand">Swiper <span>Visual Builder</span> <small class="muted">v0.2.0</small></div><div class="muted">响应式配置 · 实时预览 · 生产代码导出</div></div>
   <div class="top-actions">
     <button class="btn" id="resetBtn">恢复默认</button>
     <button class="btn" id="importBtn">导入 JSON</button>
@@ -22,6 +22,10 @@
     <div class="panel-heading"><h2>⚙️ 组件设置</h2></div>
     <div class="panel-body" tabindex="0" aria-label="组件设置，可滚动">
     <div class="accordion-tools"><span class="hint">按需展开设置项</span><div class="accordion-actions"><button type="button" id="expandSettingsBtn" class="mini-btn">全部展开</button><button type="button" id="collapseSettingsBtn" class="mini-btn">全部收起</button></div></div>
+    <details class="settings-group" open>
+      <summary><span class="group-name">🧩 轮播模板</span><span class="group-count">六种模板</span><span class="group-chevron" aria-hidden="true"></span></summary>
+      <div class="settings-group-content"><div class="field"><label for="templateSelect">选择模板</label><select id="templateSelect"></select></div><p class="hint" id="templateHint">切换模板时为每种模板保留独立草稿。</p><div class="field"><label for="effectSelect">切换效果</label><select id="effectSelect"><option value="slide">Slide</option><option value="coverflow">Coverflow</option></select></div></div>
+    </details>
     <details class="settings-group" open>
       <summary><span class="group-name">⚙️ 基础标识</span><span class="group-count">ID / Class</span><span class="group-chevron" aria-hidden="true"></span></summary>
       <div class="settings-group-content">
@@ -63,8 +67,8 @@
       <p class="hint">HTML/CSS/JS 分离用于 WordPress 主题集成时，需在页面中另外加载 Swiper 14.3.0 的 bundle CSS 和 JS。完整 HTML 已自动包含 CDN 依赖。</p>
     </div>
   </section>
-  <aside class="panel right"><div class="panel-heading preview-toolbar"><h2>🖼️ 幻灯片内容</h2><button class="btn" id="addSlideBtn">＋ 添加</button></div><div class="panel-body" tabindex="0" aria-label="幻灯片列表，可滚动"><p class="hint">按顺序生成图片卡片。图片可使用在线 URL 或网站相对路径。</p><div id="slidesList" class="slides-list"></div></div></aside>
+  <aside class="panel right"><div class="panel-heading preview-toolbar"><h2>🖼️ 幻灯片内容</h2><button class="btn" id="addSlideBtn">＋ 添加</button></div><div class="panel-body" tabindex="0" aria-label="幻灯片列表，可滚动"><p class="hint">内容字段随模板变化。切换回来会恢复该模板草稿。</p><div id="slidesList" class="slides-list"></div></div></aside>
 </main>
-<script type="module" src="./assets/js/app.js"></script>
+<script type="module" src="./assets/js/app.js?v=0.2.1"></script>
 </body>
 </html>

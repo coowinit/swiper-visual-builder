@@ -1,8 +1,4 @@
-# Swiper Visual Builder
-
-**当前稳定基线：v0.1.2（Baseline）**
-
-> 这是项目的首个基础版。后续开发以此版本为基线，优先保证已有配置、预览、代码导出与 JSON 数据格式兼容。
+# Swiper Visual Builder v0.1.0
 
 无需构建的 HTML + CSS + ES Modules 配置工具。统一 `config` 数据模型驱动表单、响应式 CSS、Swiper 初始化 JS 和独立 iframe 预览。
 
@@ -60,7 +56,7 @@ WordPress 可以用 `wp_enqueue_style`、`wp_enqueue_script` 注册资源；避�
 更完整的模板系统、拖拽排序、图片上传/压缩打包、ZIP 导出、WordPress 动态查询等放入后续版本。
 
 
-## v0.1.1 界面优化
+### v0.1.2 界面优化
 
 - 宽屏布局下固定左右侧栏的标题区，右侧「添加」按钮不随幻灯片滚动而消失。
 - 两侧内容区域保持独立滚动，但隐藏传统粗滚动条；鼠标滚轮、触控板和键盘滚动依然可用。
@@ -74,3 +70,29 @@ WordPress 可以用 `wp_enqueue_style`、`wp_enqueue_script` 注册资源；避�
 - 支持键盘 Tab 聚焦、Enter/空格展开或折叠，保留焦点可视轮廓。
 - 可使用「全部展开」「全部收起」批量操作；折叠只影响编辑界面，不影响 JSON 数据、实时预览或代码导出。
 - 沿用 v0.1.1 三栏布局与隐藏滚动条策略。
+
+## v0.2.0 模板系统
+
+- 新增 Hero / Product / Gallery / Testimonials / Coverflow / Blog 六个模板，支持直接切换。
+- 每个模板在同一编辑会话内保留独立草稿；JSON 导出保存当前模板配置。
+- Gallery 使用两个 Swiper 实例与 Thumbs 联动；Coverflow 使用官方效果。
+- 每个模板共享 generate()，预览与完整导出使用同一 HTML。
+- 旧版 v0.1.2 JSON（无 schemaVersion）导入时自动迁移为 Product 模板。
+- 限制：暂未实现跨模板草稿持久化、图库图片打包及拖拽式图层编辑。
+
+## v0.2.1 样式修正（待浏览器复测）
+
+- 新建的 Testimonials / Blog 模板默认高度改为 `auto`，避免沿用图片轮播的 420px 固定高度造成长空白。已保存的 JSON 中用户指定高度不会被覆盖。
+- Testimonials 卡片采用最小高度及弹性排版，正文和头像不会被固定高度异常分离。
+- Blog 图片采用 16:10 比例，内容自然撑开，避免固定高度导致卡片下方空白。
+- Gallery 缩略图列表与主轮播共享响应式 width / max-width，并改进活动缩略图边框与移动端高度。
+- 编辑器预览与完整 HTML 仍共用 `generate(config).full`；旧项目 JSON 结构未变。
+- 如需测试已保存项目的旧固定高度，请手动把 Testimonials / Blog 的 PC、平板、手机高度分别改为 `auto`。
+
+## 静态资源缓存版本（v0.2.1）
+
+- `index.html` 的 CSS、入口 JS 添加 `?v=0.2.1`。
+- ES Modules 的相对 `import` 路径也统一添加 `?v=0.2.1`，避免仅更新入口模块却继续命中旧依赖缓存。
+- 后续修改 CSS/JS 并部署到 GitHub Pages 时，**同步更新以上各处版本号**（建议和 Release 版本一致）。
+- 若未来资源文件较多，可改用构建工具的内容哈希文件名自动管理缓存。
+- `?v=` 是浏览器的缓存键变更方法，不会修改文件本身；需确保服务器/CDN 对查询参数缓存行为符合预期。

@@ -1,5 +1,7 @@
+import { TEMPLATE_DEFS } from './templates/registry.js?v=0.2.1';
 export const SWIPER_VERSION = '14.3.0';
 export const DEFAULT_CONFIG = {
+  schemaVersion: 2, template: 'product', effect: 'slide',
   id: 'home-product-slider', className: 'product-swiper',
   sizes: {
     desktop: { width:'100%', maxWidth:'1200px', height:'420px', slidesPerView:3, gap:24 },
@@ -32,6 +34,16 @@ export function validateConfig(c) {
   if (!o || ['navigation','pagination','autoplay','loop'].some(k=>typeof o[k]!=='boolean')) throw Error('轮播选项不正确');
   if (!Number.isFinite(o.delay)||o.delay<500||o.delay>60000||!Number.isFinite(o.speed)||o.speed<100||o.speed>10000) throw Error('自动播放间隔或切换速度无效');
   if (!Array.isArray(c.slides)||c.slides.length<1||c.slides.length>100) throw Error('需要 1–100 张幻灯片');
-  for(const s of c.slides) if (['title','subtitle','image','link'].some(k=>typeof s?.[k]!=='string')) throw Error('幻灯片字段格式不正确');
+  if(!TEMPLATE_DEFS[c.template]) throw Error('模板类型无效');
+  if(!['slide','coverflow'].includes(c.effect)) throw Error('效果类型无效');
+  for(const s of c.slides) if (Object.values(s).some(v=>typeof v!=='string')) throw Error('幻灯片字段格式不正确');
   return true;
+}
+
+export function migrateConfig(input){
+  const c=clone(input);
+  if(c.schemaVersion===undefined){c.schemaVersion=2;c.template='product';c.effect='slide';}
+  if(c.schemaVersion!==2) throw Error('不支持此项目文件版本');
+  c.template ||= 'product'; c.effect ||= 'slide';
+  validateConfig(c);return c;
 }

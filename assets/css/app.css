@@ -39,3 +39,6 @@
 .settings-group-content{padding:14px 12px 10px}
 .settings-group-content>.hint:last-child{margin-bottom:3px}
 @media(prefers-reduced-motion:reduce){.group-chevron{transition:none}}
+
+/* v0.2.0 template selector */
+#templateSelect{font-weight:650;color:#1647a5;}

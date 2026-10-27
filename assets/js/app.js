@@ -1,6 +1,8 @@
-import {DEFAULT_CONFIG,clone,validateConfig} from './config.js';
-import {generate} from './exporter.js';
-let config = clone(DEFAULT_CONFIG);
+import { TEMPLATE_DEFS, FIELDS, templateSlide,templateConfig } from './templates/registry.js?v=0.2.1';
+import {DEFAULT_CONFIG,clone,validateConfig,migrateConfig} from './config.js?v=0.2.1';
+import {generate} from './exporter.js?v=0.2.1';
+let config = clone(DEFAULT_CONFIG);config.schemaVersion=2;config.template='product';config.effect='slide';
+let drafts={product:clone(config)};
 let currentDevice='desktop',sizeDevice='desktop',codeTab='html',generated=null;
 const $=id=>document.getElementById(id);
 const status=(message,error=false)=>{ $('status').textContent=message; $('status').classList.toggle('error',error); };
@@ -10,6 +12,7 @@ const renderInputs=()=>{
   document.querySelectorAll('[data-size]').forEach(el=>el.value=config.sizes[sizeDevice][el.dataset.size]);
   document.querySelectorAll('[data-option]').forEach(el=>{const value=config.options[el.dataset.option];if(el.type==='checkbox')el.checked=value;else el.value=value;});
   $('sizeDevice').value=sizeDevice;
+  $('templateSelect').value=config.template; $('effectSelect').value=config.effect; $('effectSelect').disabled=config.template!=='coverflow'; $('templateHint').textContent=TEMPLATE_DEFS[config.template].description+' · 切换模板将保留当前草稿';
 };
 function download(content,name,type='text/plain'){
   const blob=new Blob([content],{type:`${type};charset=utf-8`}),url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -33,7 +36,7 @@ function renderSlides(){const list=$('slidesList');list.replaceChildren();config
   const card=document.createElement('div');card.className='slide-item';const head=document.createElement('div');head.className='slide-item-header';const title=document.createElement('span');title.textContent=`幻灯片 ${i+1}`;const actions=document.createElement('div');
   const buttons=[['↑',()=>move(i,-1)],['↓',()=>move(i,1)],['×',()=>{if(config.slides.length<=1){status('至少保留一张幻灯片',true);return;}config.slides.splice(i,1);renderSlides();render();}]];
   buttons.forEach(([t,fn],j)=>{const b=document.createElement('button');b.className='mini-btn';b.textContent=t;b.title=['上移','下移','删除'][j];b.addEventListener('click',fn);actions.append(b);});head.append(title,actions);card.append(head);
-  for(const [label,key] of [['标题','title'],['副标题','subtitle'],['图片 URL','image'],['链接 URL','link']])card.append(slideInput(label,slide[key],key,i));list.append(card);
+  for(const key of TEMPLATE_DEFS[config.template].fields)card.append(slideInput(FIELDS[key],slide[key]||'',key,i));list.append(card);
 });}
 function move(i,d){const j=i+d;if(j<0||j>=config.slides.length)return;[config.slides[i],config.slides[j]]=[config.slides[j],config.slides[i]];renderSlides();render();}
 document.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>{config[el.dataset.path]=el.value;scheduleRender();}));
@@ -42,14 +45,17 @@ document.querySelectorAll('[data-option]').forEach(el=>el.addEventListener('inpu
 $('sizeDevice').addEventListener('change',e=>{sizeDevice=e.target.value;currentDevice=sizeDevice;renderInputs();refreshDevice();});
 document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click',()=>{currentDevice=b.dataset.device;sizeDevice=currentDevice;renderInputs();refreshDevice();}));
 document.querySelectorAll('[data-code]').forEach(b=>b.addEventListener('click',()=>{codeTab=b.dataset.code;document.querySelectorAll('[data-code]').forEach(x=>x.classList.toggle('active',x===b));displayCode();}));
-$('addSlideBtn').addEventListener('click',()=>{if(config.slides.length>=100){status('最多支持 100 张幻灯片',true);return;}config.slides.push({title:'新幻灯片',subtitle:'请输入描述',image:'',link:'#'});renderSlides();render();});
-$('resetBtn').addEventListener('click',()=>{if(!confirm('确定恢复全部默认配置？'))return;config=clone(DEFAULT_CONFIG);renderInputs();renderSlides();render();});
+$('addSlideBtn').addEventListener('click',()=>{if(config.slides.length>=100){status('最多支持 100 张幻灯片',true);return;}config.slides.push(templateSlide(config.template,config.slides.length));renderSlides();render();});
+$('resetBtn').addEventListener('click',()=>{if(!confirm('确定恢复全部默认配置？'))return;config=templateConfig(DEFAULT_CONFIG,'product');drafts={product:clone(config)};renderInputs();renderSlides();render();});
 $('saveBtn').addEventListener('click',()=>{try{validateConfig(config);download(JSON.stringify(config,null,2),'swiper-project.json','application/json');}catch(e){status(e.message,true);}});
 $('downloadBtn').addEventListener('click',()=>{if(generated)download(generated.full,config.id+'.html','text/html');else status('请先修正配置错误',true);});
 $('downloadCodeBtn').addEventListener('click',()=>{if(generated)download(generated[codeTab],config.id+'.'+({full:'html',html:'html',css:'css',js:'js'}[codeTab]),codeTab==='full'||codeTab==='html'?'text/html':'text/plain');else status('请先修正配置错误',true);});
 $('copyBtn').addEventListener('click',async()=>{if(!generated)return;try{await navigator.clipboard.writeText(generated[codeTab]);status('代码已复制');}catch{ $('codeOutput').focus();$('codeOutput').select();status('浏览器限制自动复制，已选中代码，请按 Ctrl+C'); }});
 $('importBtn').addEventListener('click',()=>$('fileInput').click());
-$('fileInput').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>1024*1024)throw Error('JSON 文件超过 1MB');const parsed=JSON.parse(await file.text());validateConfig(parsed);config=clone(parsed);renderInputs();renderSlides();render();status('项目 JSON 导入成功');}catch(err){status('导入失败：'+err.message,true);}finally{e.target.value='';}});
+$('fileInput').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>1024*1024)throw Error('JSON 文件超过 1MB');const parsed=JSON.parse(await file.text());config=migrateConfig(parsed);drafts={[config.template]:clone(config)};renderInputs();renderSlides();render();status('项目 JSON 导入成功');}catch(err){status('导入失败：'+err.message,true);}finally{e.target.value='';}});
+for(const [key,def] of Object.entries(TEMPLATE_DEFS)){const opt=document.createElement('option');opt.value=key;opt.textContent=def.name;$('templateSelect').append(opt);}
+$('templateSelect').addEventListener('change',e=>{const key=e.target.value;if(key===config.template)return;drafts[config.template]=clone(config);config=drafts[key]?clone(drafts[key]):templateConfig(DEFAULT_CONFIG,key);if(!drafts[key])config.id='svb-'+key+'-slider';renderInputs();renderSlides();render();status('已切换至 '+TEMPLATE_DEFS[key].name+'；其他模板草稿已保留');});
+$('effectSelect').addEventListener('change',e=>{config.effect=e.target.value;render();});
 renderInputs();renderSlides();refreshDevice();render();
 
 // Group visibility is editor UI state only; it never changes exported swiper configuration.
