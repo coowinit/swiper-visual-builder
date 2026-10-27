@@ -1,10 +1,14 @@
-import { TEMPLATE_DEFS, FIELDS, templateSlide,templateConfig } from './templates/registry.js?v=0.2.1';
-import {DEFAULT_CONFIG,clone,validateConfig,migrateConfig} from './config.js?v=0.2.1';
-import {generate} from './exporter.js?v=0.2.1';
-let config = clone(DEFAULT_CONFIG);config.schemaVersion=2;config.template='product';config.effect='slide';
+import { TEMPLATE_DEFS, FIELDS, templateSlide,templateConfig } from './templates/registry.js?v=0.3.3';
+import {DEFAULT_CONFIG,clone,validateConfig,migrateConfig} from './config.js?v=0.3.3';
+import {generate} from './exporter.js?v=0.3.3';
+let config = templateConfig(DEFAULT_CONFIG,'product');
 let drafts={product:clone(config)};
 let currentDevice='desktop',sizeDevice='desktop',codeTab='html',generated=null;
 const $=id=>document.getElementById(id);
+const ICONS={simple:'M4 12h16m-7-7 7 7-7 7',chevron:'m8 4 8 8-8 8',circle:'M20 12H4m9-7 7 7-7 7',long:'M2 12h20m-9-8 8 8-8 8',thin:'m9 3 9 9-9 9',double:'m5 4 8 8-8 8m8-16 8 8-8 8',triangle:'M8 4 19 12 8 20Z',sharp:'M7 3 16 12 7 21',open:'m6 6 6 6-6 6m7-12 6 6-6 6',dash:'M4 12h16m-6-6 6 6-6 6'};
+function initIconPicker(){const picker=document.getElementById('iconPicker');for(const [name,path] of Object.entries(ICONS)){const b=document.createElement('button');b.type='button';b.className='icon-option';b.dataset.icon=name;b.title=name;b.setAttribute('aria-label',name);b.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg>`;b.addEventListener('click',()=>{config.style.navigation.icon=name;renderInputs();scheduleRender();});picker.append(b);}}
+initIconPicker();
+
 const status=(message,error=false)=>{ $('status').textContent=message; $('status').classList.toggle('error',error); };
 const dims={desktop:1100,tablet:820,mobile:390};
 const renderInputs=()=>{
@@ -12,7 +16,9 @@ const renderInputs=()=>{
   document.querySelectorAll('[data-size]').forEach(el=>el.value=config.sizes[sizeDevice][el.dataset.size]);
   document.querySelectorAll('[data-option]').forEach(el=>{const value=config.options[el.dataset.option];if(el.type==='checkbox')el.checked=value;else el.value=value;});
   $('sizeDevice').value=sizeDevice;
-  $('templateSelect').value=config.template; $('effectSelect').value=config.effect; $('effectSelect').disabled=config.template!=='coverflow'; $('templateHint').textContent=TEMPLATE_DEFS[config.template].description+' · 切换模板将保留当前草稿';
+  $('templateSelect').value=config.template; $('effectSelect').value=config.effect; const validEffects={hero:['slide','fade'],product:['slide'],gallery:['slide','fade'],testimonials:['slide'],coverflow:['slide','coverflow'],blog:['slide']};
+  [...$('effectSelect').options].forEach(opt=>opt.disabled=!validEffects[config.template].includes(opt.value)); $('effectSelect').disabled=false;
+  document.querySelectorAll('[data-style]').forEach(el=>{const [part,key]=el.dataset.style.split('.');const v=config.style[part][key];if(el.type==='checkbox')el.checked=v;else el.value=v;}); document.querySelectorAll('.icon-option').forEach(b=>{b.classList.toggle('selected',b.dataset.icon===config.style.navigation.icon);b.setAttribute('aria-pressed',String(b.dataset.icon===config.style.navigation.icon));}); $('templateHint').textContent=TEMPLATE_DEFS[config.template].description+' · 切换模板将保留当前草稿';
 };
 function download(content,name,type='text/plain'){
   const blob=new Blob([content],{type:`${type};charset=utf-8`}),url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -39,6 +45,7 @@ function renderSlides(){const list=$('slidesList');list.replaceChildren();config
   for(const key of TEMPLATE_DEFS[config.template].fields)card.append(slideInput(FIELDS[key],slide[key]||'',key,i));list.append(card);
 });}
 function move(i,d){const j=i+d;if(j<0||j>=config.slides.length)return;[config.slides[i],config.slides[j]]=[config.slides[j],config.slides[i]];renderSlides();render();}
+document.querySelectorAll('[data-style]').forEach(el=>el.addEventListener('input',()=>{const [part,key]=el.dataset.style.split('.');const val=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;config.style[part][key]=val;scheduleRender();}));
 document.querySelectorAll('[data-path]').forEach(el=>el.addEventListener('input',()=>{config[el.dataset.path]=el.value;scheduleRender();}));
 document.querySelectorAll('[data-size]').forEach(el=>el.addEventListener('input',()=>{const k=el.dataset.size;config.sizes[sizeDevice][k]=el.type==='number'?Number(el.value):el.value;scheduleRender();}));
 document.querySelectorAll('[data-option]').forEach(el=>el.addEventListener('input',()=>{const k=el.dataset.option;config.options[k]=el.type==='checkbox'?el.checked:Number(el.value);scheduleRender();}));

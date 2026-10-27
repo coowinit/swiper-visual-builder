@@ -42,3 +42,5 @@
 
 /* v0.2.0 template selector */
 #templateSelect{font-weight:650;color:#1647a5;}
+
+.svb-icon-picker{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.icon-option{height:37px;border:1px solid #d5deeb;border-radius:8px;background:#fff;color:#21334a;cursor:pointer;display:grid;place-items:center}.icon-option svg{width:20px;height:20px}.icon-option.selected{border-color:#2563eb;background:#dbeafe;color:#1d4ed8}.icon-option:focus-visible{outline:2px solid #2563eb;outline-offset:2px}

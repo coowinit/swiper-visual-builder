@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Swiper Visual Builder · v0.2.0</title>
-  <link rel="stylesheet" href="./assets/css/app.css?v=0.2.1">
+  <title>Swiper Visual Builder · v0.3.0</title>
+  <link rel="stylesheet" href="./assets/css/app.css?v=0.3.3">
 </head>
 <body>
 <header class="topbar">
-  <div><div class="brand">Swiper <span>Visual Builder</span> <small class="muted">v0.2.0</small></div><div class="muted">响应式配置 · 实时预览 · 生产代码导出</div></div>
+  <div><div class="brand">Swiper <span>Visual Builder</span> <small class="muted">v0.3.0</small></div><div class="muted">响应式配置 · 实时预览 · 生产代码导出</div></div>
   <div class="top-actions">
     <button class="btn" id="resetBtn">恢复默认</button>
     <button class="btn" id="importBtn">导入 JSON</button>
@@ -24,7 +24,7 @@
     <div class="accordion-tools"><span class="hint">按需展开设置项</span><div class="accordion-actions"><button type="button" id="expandSettingsBtn" class="mini-btn">全部展开</button><button type="button" id="collapseSettingsBtn" class="mini-btn">全部收起</button></div></div>
     <details class="settings-group" open>
       <summary><span class="group-name">🧩 轮播模板</span><span class="group-count">六种模板</span><span class="group-chevron" aria-hidden="true"></span></summary>
-      <div class="settings-group-content"><div class="field"><label for="templateSelect">选择模板</label><select id="templateSelect"></select></div><p class="hint" id="templateHint">切换模板时为每种模板保留独立草稿。</p><div class="field"><label for="effectSelect">切换效果</label><select id="effectSelect"><option value="slide">Slide</option><option value="coverflow">Coverflow</option></select></div></div>
+      <div class="settings-group-content"><div class="field"><label for="templateSelect">选择模板</label><select id="templateSelect"></select></div><p class="hint" id="templateHint">切换模板时为每种模板保留独立草稿。</p><div class="field"><label for="effectSelect">切换效果</label><select id="effectSelect"><option value="slide">Slide</option><option value="fade">Fade</option><option value="coverflow">Coverflow</option></select></div></div>
     </details>
     <details class="settings-group" open>
       <summary><span class="group-name">⚙️ 基础标识</span><span class="group-count">ID / Class</span><span class="group-chevron" aria-hidden="true"></span></summary>
@@ -51,10 +51,42 @@
       <label class="switch-row">左右导航按钮 <input id="navigation" type="checkbox" data-option="navigation"></label>
       <label class="switch-row">分页圆点 <input id="pagination" type="checkbox" data-option="pagination"></label>
       <label class="switch-row">自动播放 <input id="autoplay" type="checkbox" data-option="autoplay"></label>
+      <label class="switch-row">鼠标悬停暂停自动播放 <input id="pauseOnMouseEnter" type="checkbox" data-option="pauseOnMouseEnter"></label>
       <label class="switch-row">循环播放 <input id="loop" type="checkbox" data-option="loop"></label>
       <div class="two"><div class="field"><label for="delay">播放间隔 ms</label><input id="delay" type="number" min="500" max="60000" step="100" data-option="delay"></div><div class="field"><label for="speed">切换速度 ms</label><input id="speed" type="number" min="100" max="10000" step="50" data-option="speed"></div></div>
       </div>
     </details>
+
+    <details class="settings-group"><summary><span class="group-name">↔️ 导航按钮样式</span><span class="group-count">箭头 / 位置</span></summary><div class="settings-group-content">
+      <div class="field"><label>图标样式（点击选用）</label><div id="iconPicker" class="svb-icon-picker" role="group" aria-label="导航图标"></div></div>
+      <div class="two"><div class="field"><label>图标大小 px</label><input type="number" min="10" max="80" data-style="navigation.iconSize"></div><div class="field"><label>按钮尺寸 px</label><input type="number" min="24" max="120" data-style="navigation.buttonSize"></div></div>
+      <div class="two"><div class="field"><label>图标颜色</label><input data-style="navigation.color" placeholder="#ffffff"></div><div class="field"><label>背景颜色（可用透明）</label><input data-style="navigation.background" placeholder="#00000055"></div></div>
+      <div class="two"><div class="field"><label>圆角 px</label><input type="number" min="0" max="60" data-style="navigation.radius"></div><div class="field"><label>箭头距图片边缘 px</label><input type="number" min="0" max="100" data-style="navigation.offset"></div></div>
+      <div class="field"><label>导航垂直对齐</label><select data-style="navigation.position"><option value="top">顶部</option><option value="center">居中</option><option value="bottom">底部</option></select></div><div class="field"><label>箭头位置</label><select data-style="navigation.placement"><option value="inside">容器内</option><option value="outside">容器外</option></select></div>
+    </div></details>
+    <details class="settings-group"><summary><span class="group-name">🔘 分页器样式</span><span class="group-count">Bullets / Fraction / Progressbar</span></summary><div class="settings-group-content">
+      <div class="field"><label>分页类型</label><select data-style="pagination.type"><option value="bullets">Bullets</option><option value="fraction">Fraction</option><option value="progressbar">Progressbar</option></select></div>
+      <div class="two"><div class="field"><label>普通颜色</label><input data-style="pagination.color"></div><div class="field"><label>激活颜色</label><input data-style="pagination.activeColor"></div></div>
+      <div class="two"><div class="field"><label>圆点大小 px</label><input type="number" min="3" max="24" data-style="pagination.size"></div><div class="field"><label>圆点间距 px</label><input type="number" min="0" max="32" data-style="pagination.gap"></div></div>
+      <div class="field"><label>分页器位置</label><select data-style="pagination.placement"><option value="inside">Inside · 画面内</option><option value="outside">Outside · 画面外</option></select></div><div class="field"><label>分页器对齐</label><select data-style="pagination.align"><option value="left">左</option><option value="center">中</option><option value="right">右</option></select></div>
+      <label class="switch-row">允许点击圆点切换 <input type="checkbox" data-style="pagination.clickable"></label>
+    </div></details>
+    <details class="settings-group"><summary><span class="group-name">🎨 卡片外观</span><span class="group-count">边框 / 阴影 / 间距</span></summary><div class="settings-group-content">
+      <div class="two"><div class="field"><label>圆角 px</label><input type="number" min="0" max="80" data-style="card.radius"></div><div class="field"><label>边框宽度 px</label><input type="number" min="0" max="12" data-style="card.borderWidth"></div></div>
+      <div class="two"><div class="field"><label>边框颜色</label><input data-style="card.borderColor"></div><div class="field"><label>背景色</label><input data-style="card.background"></div></div>
+      <div class="field"><label>阴影</label><select data-style="card.shadow"><option value="none">无</option><option value="subtle">轻微</option><option value="medium">中等</option></select></div>
+      <div class="field"><label>内容 Padding (px)</label><input type="number" min="0" max="100" data-style="card.padding"></div>
+    </div></details>
+    <details class="settings-group"><summary><span class="group-name">🖼️ 图片样式</span><span class="group-count">比例 / 裁切</span></summary><div class="settings-group-content">
+      <div class="field"><label>图片显示模式</label><select data-style="image.fit"><option value="cover">Cover（裁切填充）</option><option value="contain">Contain（完整显示）</option></select></div>
+      <div class="field"><label>图片比例</label><select data-style="image.ratio"><option value="auto">自动 / 模板默认</option><option value="1/1">1:1</option><option value="4/3">4:3</option><option value="16/9">16:9</option><option value="custom">自定义</option></select></div>
+      <div class="field"><label>图片遮罩强度（0–100）</label><input type="number" min="0" max="100" data-style="image.overlay"></div><div class="field"><label>自定义宽高比（如 4 / 3）</label><input data-style="image.customRatio"></div>
+    </div></details>
+    <details class="settings-group"><summary><span class="group-name">🔤 文字样式</span><span class="group-count">字体 / 颜色 / 行数</span></summary><div class="settings-group-content">
+      <div class="two"><div class="field"><label>标题字号 px</label><input type="number" min="10" max="72" data-style="typography.titleSize"></div><div class="field"><label>描述字号 px</label><input type="number" min="10" max="40" data-style="typography.descriptionSize"></div></div>
+      <div class="two"><div class="field"><label>标题颜色</label><input data-style="typography.titleColor"></div><div class="field"><label>描述颜色</label><input data-style="typography.descriptionColor"></div></div>
+      <div class="two"><div class="field"><label>文本对齐</label><select data-style="typography.align"><option value="left">左对齐</option><option value="center">居中</option><option value="right">右对齐</option></select></div><div class="field"><label>标题最多行数</label><input type="number" min="1" max="8" data-style="typography.titleLines"></div></div>
+    </div></details>
     </div>
     <p class="status panel-status" id="status" role="status" aria-live="polite"></p>
   </aside>
@@ -69,6 +101,6 @@
   </section>
   <aside class="panel right"><div class="panel-heading preview-toolbar"><h2>🖼️ 幻灯片内容</h2><button class="btn" id="addSlideBtn">＋ 添加</button></div><div class="panel-body" tabindex="0" aria-label="幻灯片列表，可滚动"><p class="hint">内容字段随模板变化。切换回来会恢复该模板草稿。</p><div id="slidesList" class="slides-list"></div></div></aside>
 </main>
-<script type="module" src="./assets/js/app.js?v=0.2.1"></script>
+<script type="module" src="./assets/js/app.js?v=0.3.3"></script>
 </body>
 </html>
