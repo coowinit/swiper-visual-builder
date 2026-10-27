@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Swiper Visual Builder · v0.1.2</title>
+  <link rel="stylesheet" href="./assets/css/app.css">
+</head>
+<body>
+<header class="topbar">
+  <div><div class="brand">Swiper <span>Visual Builder</span> <small class="muted">v0.1.2</small></div><div class="muted">响应式配置 · 实时预览 · 生产代码导出</div></div>
+  <div class="top-actions">
+    <button class="btn" id="resetBtn">恢复默认</button>
+    <button class="btn" id="importBtn">导入 JSON</button>
+    <button class="btn" id="saveBtn">保存 JSON</button>
+    <button class="btn primary" id="downloadBtn">下载完整 HTML</button>
+    <input id="fileInput" type="file" accept=".json,application/json" hidden>
+  </div>
+</header>
+<main class="workspace">
+  <aside class="panel left">
+    <div class="panel-heading"><h2>⚙️ 组件设置</h2></div>
+    <div class="panel-body" tabindex="0" aria-label="组件设置，可滚动">
+    <div class="accordion-tools"><span class="hint">按需展开设置项</span><div class="accordion-actions"><button type="button" id="expandSettingsBtn" class="mini-btn">全部展开</button><button type="button" id="collapseSettingsBtn" class="mini-btn">全部收起</button></div></div>
+    <details class="settings-group" open>
+      <summary><span class="group-name">⚙️ 基础标识</span><span class="group-count">ID / Class</span><span class="group-chevron" aria-hidden="true"></span></summary>
+      <div class="settings-group-content">
+    <div class="field"><label for="sliderId">组件 ID</label><input id="sliderId" data-path="id" spellcheck="false" autocomplete="off"></div>
+    <div class="field"><label for="className">自定义类名</label><input id="className" data-path="className" spellcheck="false" autocomplete="off"></div>
+    <div class="hint">内置 swiper、swiper-wrapper、swiper-slide 类名不变；自定义样式以 ID 隔离。</div>
+      </div>
+    </details>
+    <details class="settings-group" open>
+      <summary><span class="group-name">📐 响应式容器</span><span class="group-count">尺寸 / 列数</span><span class="group-chevron" aria-hidden="true"></span></summary>
+      <div class="settings-group-content">
+<div class="field"><label for="sizeDevice">编辑设备尺寸</label><select id="sizeDevice"><option value="desktop">PC · ≥1024px</option><option value="tablet">平板 · 768–1023px</option><option value="mobile">手机 · ＜768px</option></select></div>
+      <div class="two"><div class="field"><label for="width">宽度</label><input id="width" data-size="width" placeholder="100%"></div><div class="field"><label for="maxWidth">最大宽度</label><input id="maxWidth" data-size="maxWidth" placeholder="1200px"></div></div>
+      <div class="field"><label for="height">高度</label><input id="height" data-size="height" placeholder="420px 或 auto"></div>
+      <div class="two"><div class="field"><label for="slidesPerView">每屏列数</label><input id="slidesPerView" data-size="slidesPerView" type="number" min="1" max="10" step="1"></div><div class="field"><label for="gap">卡片间距 (px)</label><input id="gap" data-size="gap" type="number" min="0" max="200" step="1"></div></div>
+      <div class="hint">支持 px、%、vw、vh、rem、em、auto。修改后同步更新预览、CSS 和 JS。</div>
+      </div>
+    </details>
+    <details class="settings-group">
+      <summary><span class="group-name">🎛️ 轮播选项</span><span class="group-count">导航 / 播放</span><span class="group-chevron" aria-hidden="true"></span></summary>
+      <div class="settings-group-content">
+
+      <label class="switch-row">左右导航按钮 <input id="navigation" type="checkbox" data-option="navigation"></label>
+      <label class="switch-row">分页圆点 <input id="pagination" type="checkbox" data-option="pagination"></label>
+      <label class="switch-row">自动播放 <input id="autoplay" type="checkbox" data-option="autoplay"></label>
+      <label class="switch-row">循环播放 <input id="loop" type="checkbox" data-option="loop"></label>
+      <div class="two"><div class="field"><label for="delay">播放间隔 ms</label><input id="delay" type="number" min="500" max="60000" step="100" data-option="delay"></div><div class="field"><label for="speed">切换速度 ms</label><input id="speed" type="number" min="100" max="10000" step="50" data-option="speed"></div></div>
+      </div>
+    </details>
+    </div>
+    <p class="status panel-status" id="status" role="status" aria-live="polite"></p>
+  </aside>
+  <section class="center">
+    <div class="preview-toolbar"><div><strong>实时预览</strong><div class="muted">编辑设置后自动刷新</div></div><div class="device-group" id="devices"><button data-device="desktop" class="active">🖥️ PC</button><button data-device="tablet">▣ 平板</button><button data-device="mobile">📱 手机</button></div></div>
+    <div class="preview-wrap"><div id="deviceFrame" class="device-frame" style="width:1100px"><iframe id="preview" title="Swiper 组件实时预览" sandbox="allow-scripts allow-same-origin"></iframe></div><div class="preview-note" id="previewNote">PC 预览宽度 1100px · iframe 独立渲染</div></div>
+    <div class="section"><div class="preview-toolbar"><div><strong>代码导出</strong><div class="muted">生成结果与 iframe 预览共用同一导出器</div></div><div class="tab-group" id="codeTabs"><button class="active" data-code="html">HTML</button><button data-code="css">CSS</button><button data-code="js">JS</button><button data-code="full">完整页面</button></div></div>
+      <textarea class="code-area" id="codeOutput" readonly spellcheck="false" aria-label="生成的代码"></textarea>
+      <div class="editor-actions"><button class="btn primary" id="copyBtn">复制当前代码</button><button class="btn" id="downloadCodeBtn">下载当前文件</button></div>
+      <p class="hint">HTML/CSS/JS 分离用于 WordPress 主题集成时，需在页面中另外加载 Swiper 14.3.0 的 bundle CSS 和 JS。完整 HTML 已自动包含 CDN 依赖。</p>
+    </div>
+  </section>
+  <aside class="panel right"><div class="panel-heading preview-toolbar"><h2>🖼️ 幻灯片内容</h2><button class="btn" id="addSlideBtn">＋ 添加</button></div><div class="panel-body" tabindex="0" aria-label="幻灯片列表，可滚动"><p class="hint">按顺序生成图片卡片。图片可使用在线 URL 或网站相对路径。</p><div id="slidesList" class="slides-list"></div></div></aside>
+</main>
+<script type="module" src="./assets/js/app.js"></script>
+</body>
+</html>
