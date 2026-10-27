@@ -1,134 +1,97 @@
-# Swiper Visual Builder v0.1.0
+# Swiper Visual Builder
 
-无需构建的 HTML + CSS + ES Modules 配置工具。统一 `config` 数据模型驱动表单、响应式 CSS、Swiper 初始化 JS 和独立 iframe 预览。
+**一个基于 [Swiper.js](https://swiperjs.com/) 的轻量级可视化轮播设计与代码生成工具。**
 
-## 启动
+无需编写 Swiper 初始化代码，即可选择轮播模板、调整响应式布局与视觉样式、实时预览，并导出可集成到 HTML 网站或 WordPress 主题中的 HTML、CSS 和 JavaScript。
 
-在项目根目录启动静态服务器（由于使用 JavaScript ES Modules，部分浏览器不允许直接通过 `file://` 加载）：
+**当前稳定版本：v0.3.3** · [查看 Releases](https://github.com/coowinit/swiper-visual-builder/releases)
+
+## 核心功能
+
+- **六种内置模板**：Hero Banner、Product Carousel、Thumbnail Gallery、Testimonials、Coverflow、Blog Carousel。选择模板即可加载对应的内容结构和默认样式。
+- **响应式配置**：分别设置 PC、平板、手机的容器宽度、最大宽度、高度、显示列数和间距；在编辑器中切换设备预览。
+- **导航与分页**：选择 SVG 箭头图标，设置尺寸、颜色、背景、圆角、Inside / Outside 和偏移；分页支持 Bullets、Fraction、Progressbar、对齐与位置设置。
+- **外观编辑**：调整卡片背景、圆角、边框、阴影、Padding，图片 Cover / Contain、比例与遮罩，以及标题和描述的字号、颜色、对齐方式和行数。
+- **轮播交互**：导航、分页、循环、自动播放、间隔、速度与悬停暂停；按模板限制 Slide / Fade / Coverflow 的适用组合。
+- **内容管理**：添加、编辑、删除及调整幻灯片顺序。各模板在当前编辑会话中保留独立草稿。
+- **即时预览与代码导出**：独立 iframe 预览；查看、复制或下载 HTML、CSS、JavaScript，也可导出完整 HTML 页面。
+- **JSON 项目管理**：保存当前项目配置并重新导入；支持迁移早期版本的 JSON。
+- **内置 SVG 演示素材**：默认预览不需要外部占位图片；导出的 HTML 可内嵌这些演示 SVG。
+
+## 六种轮播模板
+
+| 模板 | 适用场景 | 主要特色 |
+| --- | --- | --- |
+| **Hero Banner** | 网站首页横幅 | 大图、标题、描述、按钮，支持 Fade |
+| **Product Carousel** | 产品展示 | 响应式多列图片卡片 |
+| **Thumbnail Gallery** | 产品图片画廊 | 主图与缩略图联动，支持 Fade |
+| **Testimonials** | 客户评价 | 评价、头像与作者信息 |
+| **Coverflow** | 特色图片展示 | 3D 透视切换 |
+| **Blog Carousel** | 博客与资讯 | 封面图、分类、日期与摘要 |
+
+> 模板与切换效果不是一回事。编辑器会根据所选模板限制不合适的效果组合，避免生成不兼容的配置。
+
+## 快速开始
+
+本项目使用原生 **HTML + CSS + JavaScript ES Modules**，无需 npm 安装或前端构建。
+
+克隆或下载仓库后，在项目根目录运行：
 
 ```powershell
 python -m http.server 8000
 ```
 
-然后在 Chrome 访问 `http://localhost:8000/`。如果未安装 Python，也可以使用 VS Code Live Server 或其他静态 HTTP 服务。
+随后在浏览器打开 **http://localhost:8000/**。也可以使用 VS Code Live Server 等静态 HTTP 服务。由于采用 ES Modules，不建议直接使用 `file://` 打开编辑器。
 
-## 功能
+基本使用流程：
 
-- 三设备容器 width / max-width / height 和 slidesPerView / spaceBetween 设置；CSS 断点为 768px 和 1024px。
-- 自定义 Swiper ID 和类名；组件 CSS 以 ID 为作用域，避免与网站其他组件相互干扰。
-- 导航、分页、自动播放、间隔、动画速度、循环。
-- 幻灯片增删、排序、内容编辑；支持图片 URL 或网站相对路径。
-- 实时 iframe 预览；查看、复制和下载 HTML/CSS/JS/完整 HTML。
-- 配置 JSON 导入、导出。
+1. 选择轮播模板并修改幻灯片内容。
+2. 设置组件 ID / Class、响应式尺寸、导航、分页及视觉样式。
+3. 切换 PC / 平板 / 手机预览，确认实际效果。
+4. 导出完整 HTML 进行独立测试，或将分离的 HTML / CSS / JS 集成到网站。
+5. 导出 JSON，便于以后重新编辑当前项目。
 
-## 文件
+## 网站集成
 
-- `index.html`：编辑器界面
-- `assets/css/app.css`：编辑器样式
-- `assets/js/config.js`：配置默认值和验证
-- `assets/js/exporter.js`：**唯一**的 HTML/CSS/JS 生成器
-- `assets/js/app.js`：编辑器交互和预览
+- **完整 HTML**：包含演示页面结构、样式、初始化脚本和 Swiper CDN 引用，适合快速测试。
+- **分离代码**：适合已有 HTML 项目或 WordPress 主题；由网站统一加载 Swiper 资源，避免在同一页面重复引入。
+- **自定义 ID 与 Class**：导出 CSS 主要以组件 ID 为作用域，便于多个轮播共存。
 
-## 生产环境集成
+当前使用 **Swiper.js 14.3.0**。生成代码引用的 Swiper 库与编辑器自身 `?v=` 静态资源缓存版本是两个独立概念。
 
-完整 HTML 导出已引入固定版本 Swiper `14.3.0`（jsDelivr CDN）。分离导出时：
+**注意：** 编辑器内置占位 SVG 可嵌入导出代码，但用户填写的外部图片 URL 或站点相对路径不会自动打包；发布前请替换为真实素材并检查路径。完整 HTML 默认仍使用 Swiper CDN，不能视为完全离线包。
 
-1. 在网站中引入 `https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.css`。
-2. 插入导出的 HTML。
-3. 在主题 CSS 中添加导出的 CSS。
-4. 页面已引入 `https://cdn.jsdelivr.net/npm/swiper@14.3.0/swiper-bundle.min.js` 后，执行导出的 JS。应确保 Swiper 全局变量已经加载。
+## 技术设计
 
-WordPress 可以用 `wp_enqueue_style`、`wp_enqueue_script` 注册资源；避免同页面多次加载 bundle。
+```text
+统一 JSON 配置
+    ├── 模板定义与默认样式
+    ├── 参数校验与旧配置迁移
+    └── 统一代码生成器
+          ├── iframe 实时预览
+          └── HTML / CSS / JS 导出
+```
 
-## 说明与限制
+预览和完整 HTML 导出共用生成逻辑，减少“编辑器看起来正确、导出后不一致”的风险。编辑器 CSS、JS 与 ES Module 引用使用发布版本参数进行缓存管理。
 
-- **图片未打包**：`picsum.photos` 示例依赖网络，实际网站请替换为自己的图片 URL 或相对路径；导出后不会把图片复制到项目中。
-- **CDN 依赖**：编辑器自身无需构建，但轮播预览和完整 HTML 使用 CDN，所以首次显示需要网络。
-- **循环保护**：幻灯片数量不足以满足最大列数时，生成器自动关闭 `loop`，避免出现 Swiper 循环所需数量不足的警告。不要把此降级误认为循环已启用。
-- `height: auto` 时高度由内容决定；本示例图文卡片采用百分比高度，建议为需要固定画面高度的轮播使用 px/vh。
-- 版本定位为轻量配置器，不是图层拖拽设计器；尺寸输入只接受白名单 CSS 长度表达式。
-- ID 和类名必须由字母开头，只支持字母数字、下划线、连字符；在页面中请确保组件 ID 唯一。
-- iframe 中使用的源码来自 `generate(config).full`，导出的完整 HTML 亦直接使用同一字符串。预览视口宽度固定模拟为 PC 1100px、平板 820px、手机 390px，并非浏览器设备模拟器。
-- 配置文件不运行任意 JS，文本经 HTML 转义；URL 字段仍应使用可信的图片及链接地址。
+## 后续扩展方向
 
-## 后续规划
+以下是规划方向，**尚未作为当前版本的功能承诺**。
 
-更完整的模板系统、拖拽排序、图片上传/压缩打包、ZIP 导出、WordPress 动态查询等放入后续版本。
+| 优先级 | 方向 | 计划内容 |
+| --- | --- | --- |
+| **优先** | 图片资源管理 | 本地图片上传、预览、压缩，以及导出资源处理 |
+| **优先** | ZIP 完整打包 | HTML / CSS / JS / 图片一起导出，改善离线部署体验 |
+| **优先** | 模板与样式完善 | 扩充高质量模板预设，继续优化移动端与默认视觉 |
+| **中期** | 项目管理 | 多模板草稿持久化、配置版本迁移、项目导入导出体验 |
+| **中期** | WordPress 集成 | 提供主题接入示例，研究与动态文章、产品查询对接 |
+| **后期** | 高级交互 | 图片放大预览、更多兼容效果、可访问性与性能优化 |
+| **暂缓** | 自由图层编辑 | 类似 Swiper Studio 的拖放、图层和动画时间线，评估维护成本后再决定 |
 
+**项目原则：** 优先生成适合实际网站使用、可维护的标准代码；配置、预览与导出保持一致；不过度堆砌设置选项。
 
-### v0.1.2 界面优化
+## 项目链接
 
-- 宽屏布局下固定左右侧栏的标题区，右侧「添加」按钮不随幻灯片滚动而消失。
-- 两侧内容区域保持独立滚动，但隐藏传统粗滚动条；鼠标滚轮、触控板和键盘滚动依然可用。
-- 中间预览与代码区独立滚动，浏览器整体不会因幻灯片过多而持续变长。
-- 窄屏设备保留自然页面滚动，避免嵌套滚动区域。
-- 本次只调整编辑器布局，不改变项目 JSON、Swiper 生成器或导出代码。
-
-## v0.1.2 更新：折叠配置分组
-
-- 左侧设置划分为「基础标识」「响应式容器」「轮播选项」三个原生 `<details>` 可折叠区域；默认展开前两组。
-- 支持键盘 Tab 聚焦、Enter/空格展开或折叠，保留焦点可视轮廓。
-- 可使用「全部展开」「全部收起」批量操作；折叠只影响编辑界面，不影响 JSON 数据、实时预览或代码导出。
-- 沿用 v0.1.1 三栏布局与隐藏滚动条策略。
-
-## v0.2.0 模板系统
-
-- 新增 Hero / Product / Gallery / Testimonials / Coverflow / Blog 六个模板，支持直接切换。
-- 每个模板在同一编辑会话内保留独立草稿；JSON 导出保存当前模板配置。
-- Gallery 使用两个 Swiper 实例与 Thumbs 联动；Coverflow 使用官方效果。
-- 每个模板共享 generate()，预览与完整导出使用同一 HTML。
-- 旧版 v0.1.2 JSON（无 schemaVersion）导入时自动迁移为 Product 模板。
-- 限制：暂未实现跨模板草稿持久化、图库图片打包及拖拽式图层编辑。
-
-## v0.2.1 样式修正（待浏览器复测）
-
-- 新建的 Testimonials / Blog 模板默认高度改为 `auto`，避免沿用图片轮播的 420px 固定高度造成长空白。已保存的 JSON 中用户指定高度不会被覆盖。
-- Testimonials 卡片采用最小高度及弹性排版，正文和头像不会被固定高度异常分离。
-- Blog 图片采用 16:10 比例，内容自然撑开，避免固定高度导致卡片下方空白。
-- Gallery 缩略图列表与主轮播共享响应式 width / max-width，并改进活动缩略图边框与移动端高度。
-- 编辑器预览与完整 HTML 仍共用 `generate(config).full`；旧项目 JSON 结构未变。
-- 如需测试已保存项目的旧固定高度，请手动把 Testimonials / Blog 的 PC、平板、手机高度分别改为 `auto`。
-
-## 静态资源缓存版本（v0.2.1）
-
-- `index.html` 的 CSS、入口 JS 添加 `?v=0.2.1`。
-- ES Modules 的相对 `import` 路径也统一添加 `?v=0.2.1`，避免仅更新入口模块却继续命中旧依赖缓存。
-- 后续修改 CSS/JS 并部署到 GitHub Pages 时，**同步更新以上各处版本号**（建议和 Release 版本一致）。
-- 若未来资源文件较多，可改用构建工具的内容哈希文件名自动管理缓存。
-- `?v=` 是浏览器的缓存键变更方法，不会修改文件本身；需确保服务器/CDN 对查询参数缓存行为符合预期。
-
-
-## v0.3.0 开发测试版
-
-- 左侧新增导航、分页、卡片、图片、文字样式五个分组；支持鼠标悬停暂停自动播放。
-- 模板效果限制：Hero 和 Gallery 支持 Slide/Fade，Coverflow 支持 Slide/Coverflow，其余支持 Slide。
-- 通过统一 `config.style` 在导出器生成 CSS；预览使用 `generate(config).full`。
-- 新 JSON 为 `schemaVersion: 3`，v0.2.x 和 v0.1.x JSON 自动补全样式配置。
-- 色值输入支持 `#RGB`、`#RRGGBB`、`#RRGGBBAA` 和 `transparent`；如需半透明背景推荐 `#00000055`。
-- 样式编辑器为 v0.3.0 开发测试版，正式发布前需要 Chrome 真机端到端检查。
-
-## v0.3.1 布局修复（测试版）
-
-- 为主轮播增加 `#ID-stage` 外层舞台容器，外侧箭头在舞台预留的安全边距中布局，而不是使用负值定位。
-- 恢复主轮播内容裁切，避免导航显示相邻幻灯片，以及浏览器横向溢出。
-- 缩略图保持舞台内容区域宽度，继续跟随主图。
-- 新建模板使用专属视觉预设：Hero/Product/Coverflow 使用浅色叠加文字；Blog/Testimonials 使用深色文字；Gallery 默认 contain。
-- 不改写已有 JSON 导入的用户自定义颜色等配置。
-- 本轮为开发测试版，需进一步验证不同设备与自动高度情况下的外侧导航。
-
-## v0.3.2 开发测试：图标、分页及离线演示
-- 导航增加 10 种 SVG 图标按钮选择和上/中/下对齐，Inside/Outside 仍在舞台内预留空间。
-- 分页支持 Inside/Outside 与左/中/右对齐，Outside 占用布局高度。
-- 六模板使用本地 SVG 占位图；完整 HTML 和 HTML 片段将内置演示 SVG 编码为 data URI，不依赖编辑器目录。Swiper JS/CSS CDN 仍需网络。
-- 不强制所有模板白字：图片叠加型使用白色，浅色内容卡片使用深色；图片叠加型提供遮罩强度配置。
-- 当前为开发测试版，未完成六模板全设备浏览器视觉验收。
-
-
-## v0.3.3 开发测试：外侧箭头偏移修正
-
-- 修正 Outside 模式下偏移被舞台内边距抵消的问题。
-- **箭头距图片边缘 (px)**：Inside 表示按钮外缘距离图片内侧边缘；Outside 表示按钮外缘与图片区域之间的间隙。
-- Outside 模式在舞台内部预留 `buttonSize + offset + 8px` 的安全空间，箭头定位在舞台两端 8px 处；避免负定位和整页横向溢出。
-- Offset 增大时图片可用区域会减小，这是保证组件总宽度不溢出的取舍。
-- 继续保持 6 模板共用生成逻辑；小屏幕请勿同时使用过大按钮及偏移。
-- 同步资源查询参数 `?v=0.3.3`；未发布正式 Release。
+- [GitHub 仓库](https://github.com/coowinit/swiper-visual-builder)
+- [版本发布记录](https://github.com/coowinit/swiper-visual-builder/releases)
+- [Swiper 官方文档](https://swiperjs.com/)
